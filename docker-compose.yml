@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  web:
+    restart: always
+    container_name: web_app
+    image: flask-boilerplate:flask-boilerplate
+    build: .
+    ports:
+      - "5000:5000"

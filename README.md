@@ -49,6 +49,16 @@ If you are outside of the project directory make sure to provide the exact path 
 $ export FLASK_ENV=development
 ```
 
+Assign the host ip for your application
+```ignorelang
+$ export FLASK_RUN_HOST=0.0.0.0
+```
+
+Assign the port your application will be listening for incoming connections
+```ignorelang
+$ export FLASK_RUN_PORT=8000
+```
+
 In order to install and run the application you need to issue the following commands:
 ```ignorelang
 $ pip install -e .
@@ -122,4 +132,27 @@ Script - Already has the "script" tags added, no need to add them.
 ```ignorelang
 {% block script %}
 {% endblock script %}
+```
+
+## How to build the docker image
+Note: Run the following commands from the current directory where the Dockerfile is located.<br />
+
+Lets build everything using docker-compose with the switch -d to run it on the background.
+```ignorelang
+$ sudo docker-compose up -d
+```
+
+If you want to stop the web application run.
+```ignorelang
+$ sudo docker-compose down
+```
+
+If you don't have docker-compose then build the image manually.
+```ignorelang
+$ sudo docker build . --tag "flask-boilerplate:flask-boilerplate"
+```
+
+Lets build the container using docker run.
+```ignorelang
+$ sudo docker run -d -p 5000:5000 --name web_app flask-boilerplate:flask-boilerplate
 ```
