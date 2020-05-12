@@ -11,4 +11,4 @@ COPY . /web_app
 RUN pip install --no-cache-dir --quiet -r requirements.txt
 RUN pip install -e .
 
-CMD ["flask", "run"]
+ENTRYPOINT ["flask", "run"]
