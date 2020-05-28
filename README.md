@@ -156,3 +156,13 @@ Lets build the container using docker run.
 ```ignorelang
 $ sudo docker run -d -p 5000:5000 --name web_app flask-boilerplate:flask-boilerplate
 ```
+
+If you need to export the image after creating it use the following command
+```ignorelang
+$ sudo docker save -o /docker_images/flask-boilerplate.tar flask-boilerplate:flask-boilerplate
+```
+
+To load the image on another server use the following command
+```ignorelang
+$ sudo docker load -i /docker_images/flask-boilerplate.tar
+```
