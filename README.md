@@ -7,6 +7,7 @@ This is the base of a web application in Flask to get you started and save time.
 [Flask Official Documentation](https://flask.palletsprojects.com/en/1.1.x/ "Flask Official Documentation")<br />
 [Larger Applications](https://flask.palletsprojects.com/en/1.1.x/patterns/packages/ "Larger Applications")<br />
 [Modular Applications with Blueprints](https://flask.palletsprojects.com/en/1.1.x/blueprints/#blueprints "Modular Applications with Blueprints")<br />
+[Gunicorn](https://gunicorn.org/ "Gunicorn")<br />
 
 I am using the following Bootstrap Template "SB Admin 2" from Start Bootstrap<br />
 [Start Bootstrap](https://startbootstrap.com/themes/sb-admin-2/ "SB Admin 2")
@@ -22,6 +23,7 @@ I am using the following Bootstrap Template "SB Admin 2" from Start Bootstrap<br
 ```ignorelang
 /Flask-Boilerplate
     setup.py
+    wsgi.py
     /application
         __init__.py
         views.py
@@ -39,9 +41,16 @@ I am using the following Bootstrap Template "SB Admin 2" from Start Bootstrap<br
 ---
 
 ## How to run the web application
+NOTE: gunicorn does not work on Windows
+In order to run the application run it with gunicorn using the following command:
+```ignorelang
+$ gunicorn -w 4 -b 0.0.0.0:5000 wsgi
+```
+
+## You can also run the application using setup
 In order to run the application you need to export an environment variable that tells Flask where to find the application instance:
 ```ignorelang
-$ export FLASK_APP=application
+$ export FLASK_APP=myapp
 ```
 
 If you are outside of the project directory make sure to provide the exact path to your application directory. Similarly you can turn on the development features like this:
@@ -165,4 +174,31 @@ $ sudo docker save -o /docker_images/flask-boilerplate.tar flask-boilerplate:fla
 To load the image on another server use the following command
 ```ignorelang
 $ sudo docker load -i /docker_images/flask-boilerplate.tar
+```
+
+## What if you need to run your application over HTTPS while on development?
+You can do so using ssl_context which create the certificates on the fly with the following code.
+NOTE: to be able to use ssl_context you need to install the following
+```ignorelang
+$ pip install pyOpenSSL
+```
+```ignorelang
+from flask import Flask
+
+application = Flask(__name__)
+
+
+@application.route('/')
+def home():
+    return 'Hello World!'
+
+
+if __name__ == '__main__':
+    application.run(ssl_context='adhoc', host='0.0.0.0', port=443)
+
+```
+
+## Build the certificates
+```ignorelang
+$ openssl req -x509 -newkey rsa:4096 -nodes -out /etc/container_data/certs/cert.pem -keyout /etc/container_data/certs/key.pem -days 3
 ```

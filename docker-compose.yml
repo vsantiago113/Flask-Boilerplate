@@ -5,5 +5,15 @@ services:
     container_name: web_app
     image: flask-boilerplate:flask-boilerplate
     build: .
+    volumes:
+      - web_app_data:/var/web_app_data
+      - /etc/container_data/certs/cert.pem:/certs/cert.pem
+      - /etc/container_data/certs/key.pem:/certs/key.pem
     ports:
-      - "5000:5000"
+      - 5000:5000
+    entrypoint: ['gunicorn', '--certfile', '/certs/cert.pem', '--keyfile', '/certs/key.pem',
+                 '-w', '7', '-b', '0.0.0.0:5000', 'wsgi']
+
+volumes:
+  web_app_data:
+    external: false
