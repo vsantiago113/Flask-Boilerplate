@@ -200,5 +200,5 @@ if __name__ == '__main__':
 
 ## Build the certificates
 ```ignorelang
-$ openssl req -x509 -newkey rsa:4096 -nodes -out /etc/container_data/certs/cert.pem -keyout /etc/container_data/certs/key.pem -days 3
+$ openssl req -x509 -newkey rsa:4096 -nodes -out /etc/container_data/certs/cert.pem -keyout /etc/container_data/certs/key.pem -days 365
 ```
