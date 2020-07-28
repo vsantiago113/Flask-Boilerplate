@@ -40,38 +40,16 @@ I am using the following Bootstrap Template "SB Admin 2" from Start Bootstrap<br
 
 ---
 
-## How to run the web application
+# How to run the web application on any Operating System
+```ignorelang
+$ python3 wsgi.py
+```
+
+## How to run the web application with gunicorn (Mac and Linux)
 NOTE: gunicorn does not work on Windows
 In order to run the application run it with gunicorn using the following command:
 ```ignorelang
 $ gunicorn -w 4 -b 0.0.0.0:5000 wsgi
-```
-
-## You can also run the application using setup
-In order to run the application you need to export an environment variable that tells Flask where to find the application instance:
-```ignorelang
-$ export FLASK_APP=myapp
-```
-
-If you are outside of the project directory make sure to provide the exact path to your application directory. Similarly you can turn on the development features like this:
-```ignorelang
-$ export FLASK_ENV=development
-```
-
-Assign the host ip for your application
-```ignorelang
-$ export FLASK_RUN_HOST=0.0.0.0
-```
-
-Assign the port your application will be listening for incoming connections
-```ignorelang
-$ export FLASK_RUN_PORT=8000
-```
-
-In order to install and run the application you need to issue the following commands:
-```ignorelang
-$ pip install -e .
-$ flask run
 ```
 
 ---
@@ -146,24 +124,14 @@ Script - Already has the "script" tags added, no need to add them.
 ## How to build the docker image
 Note: Run the following commands from the current directory where the Dockerfile is located.<br />
 
-Lets build everything using docker-compose with the switch -d to run it on the background.
+Lets build everything using docker-compose with the switch -d to run it on the background and --build to build everything.
 ```ignorelang
-$ sudo docker-compose up -d
+$ sudo docker-compose up -d --build
 ```
 
-If you want to stop the web application run.
+If you want to bring down the web application and remove the images run.
 ```ignorelang
-$ sudo docker-compose down
-```
-
-If you don't have docker-compose then build the image manually.
-```ignorelang
-$ sudo docker build . --tag "flask-boilerplate:flask-boilerplate"
-```
-
-Lets build the container using docker run.
-```ignorelang
-$ sudo docker run -d -p 5000:5000 --name web_app flask-boilerplate:flask-boilerplate
+$ sudo docker-compose down --volume --rmi all
 ```
 
 If you need to export the image after creating it use the following command
@@ -198,7 +166,7 @@ if __name__ == '__main__':
 
 ```
 
-## Build the certificates
+## Build the self-signed certificates
 ```ignorelang
 $ openssl req -x509 -newkey rsa:4096 -nodes -out /etc/container_data/certs/cert.pem -keyout /etc/container_data/certs/key.pem -days 365
 ```
