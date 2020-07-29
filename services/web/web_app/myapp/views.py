@@ -36,7 +36,6 @@ def internal_server_error(e):
 
 
 @application.route('/')
-@application.route('/home')
 def home():
     return render_template('index.html')
 

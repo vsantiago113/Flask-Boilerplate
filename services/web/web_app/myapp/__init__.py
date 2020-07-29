@@ -1,11 +1,10 @@
 from flask import Flask, g
 from flask_login import LoginManager, current_user
-import uuid
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 
-global_secret_key = uuid.uuid4().hex
-wtf_csrf_secret_key = uuid.uuid4().hex
+global_secret_key = 'this_is_my_global_secret_key_change_it'
+wtf_csrf_secret_key = 'wtf_csrf_secret_token_key_change_it'
 
 application = Flask(__name__)
 application.secret_key = global_secret_key
