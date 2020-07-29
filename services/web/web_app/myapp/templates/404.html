@@ -1,23 +1,12 @@
 {% extends 'layout.html' %}
 
-{% block title %}HTTP Error 404{% endblock %}
-
-{% block side_bar_title %}
-Flask-Boilerplate
-{% endblock side_bar_title %}
-
-{% block profile_name %}Victor Santiago{% endblock profile_name %}
-
-{% block profile_img %}
-https://avatars2.githubusercontent.com/u/10477698?s=460&u=716195bd2a8b0ac50f90768f97dd2007895d5837&v=4
-{% endblock profile_img %}
-
-{% block content %}
-  <!-- 404 Error Text -->
-  <div class="text-center">
-    <div class="error mx-auto" data-text="404">404</div>
-    <p class="lead text-gray-800 mb-5">Page Not Found</p>
-    <p class="text-gray-500 mb-0">It looks like you found a glitch in the matrix...</p>
-    <a href="{{ url_for('index') }}">&larr; Back to Dashboard</a>
-  </div>
+{% block container %}
+    <div class="full-screen-size-fixed-container d-flex justify-content-center align-items-center">
+        <div class="p-3 text-center shadow">
+            <h1 class="display-1 font-weight-bold ">404</h1>
+            <h4 class="text-muted">Page Not Found</h4>
+            <p class="">The page got swallowed by a black hole...</p>
+            <a class="btn btn-dark" href="{{ url_for('home') }}" role="button"><i class="fas fa-house-user mr-2"></i> Let&#39;s go back home!</a>
+        </div>
+    </div>
 {% endblock %}
