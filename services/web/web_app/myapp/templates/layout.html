@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Bootstrap 4 Template</title>
+        <title>{% block title %}{% endblock %}</title>
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -14,14 +14,14 @@
     <body>
 
         <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-            <a class="navbar-brand ml-3" href="index.html">Navbar</a>
+            <a class="navbar-brand ml-3" href="{{ url_for('home') }}">LOGO</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
                 <i class="fas fa-bars fa-2x"></i>
             </button>
             <div class="collapse navbar-collapse" id="collapsibleNavbar">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
+                        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="Blog.html">Blog</a>
@@ -46,7 +46,7 @@
                         </div>
                     </div>
                 </form>
-                {% if current_user.is_authenticated %}
+                {% if g.user.is_authenticated %}
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link mr-3" href="{{ url_for('logout') }}">Logout</a>

@@ -1,9 +1,9 @@
 from myapp import application, login_manager, database, csrf
 from myapp.blueprints import example
-from flask import render_template, redirect, url_for, abort, request, session, escape, g, flash
+from flask import render_template, redirect, url_for, request, escape, g, flash
 from myapp.models import User
-from flask_login import login_required, logout_user, current_user, login_user
-from flask_bcrypt import generate_password_hash
+from flask_login import login_required, logout_user, login_user
+from flask_bcrypt import check_password_hash
 from myapp.forms import LoginForm
 
 application.register_blueprint(example.api)
@@ -22,12 +22,7 @@ def before_first_request():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get_or_404(int(user_id))
-
-
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return 'Unauthorized'
+    return User.query.filter_by(id=user_id).first()
 
 
 @application.errorhandler(404)
@@ -41,16 +36,31 @@ def internal_server_error(e):
 
 
 @application.route('/')
+@application.route('/home')
 def home():
     return render_template('index.html')
 
 
 @application.route('/login', methods=['GET', 'POST'])
 def login():
+    if g.user.is_authenticated:
+        return redirect(url_for('home'))
     form = LoginForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            return redirect(url_for('home'))
+            email = escape(form.email.data)
+            password = escape(form.password.data)
+            user = User.query.filter_by(email=email).first()
+            if user:
+                if check_password_hash(user.password, password):
+                    login_user(user, remember=form.remember_me.data)
+                    return redirect(url_for('home'))
+                else:
+                    flash('Invalid username/password!', 'danger')
+                    return render_template('login.html', form=form)
+            else:
+                flash('Account does not exists, please register an account.', 'warning')
+                return render_template('login.html', form=form)
         else:
             return render_template('login.html', form=form)
     else:
@@ -58,19 +68,10 @@ def login():
 
 
 @application.route('/logout')
+@login_required
 def logout():
     logout_user()
-    return 'Logged out'
-
-
-# @application.route('/register')
-# def register():
-#     return render_template('register.html')
-#
-#
-# @application.route('/tables')
-# def tables():
-#     return render_template('tables.html')
+    return redirect(url_for('login'))
 
 
 application.register_error_handler(404, page_not_found)
