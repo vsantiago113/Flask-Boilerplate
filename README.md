@@ -4,13 +4,35 @@ This is the base of a web application in Flask to get you started and save time.
 ---
 
 ## Documentation and resources
-[Flask Official Documentation](https://flask.palletsprojects.com/en/1.1.x/ "Flask Official Documentation")<br />
+[Docker multi-stage builds](https://docs.docker.com/develop/develop-images/multistage-build/ "Docker multi-stage builds")<br />
+[Best practices for writing Dockerfiles](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/ "Best practices for writing Dockerfiles")
 [Larger Applications](https://flask.palletsprojects.com/en/1.1.x/patterns/packages/ "Larger Applications")<br />
 [Modular Applications with Blueprints](https://flask.palletsprojects.com/en/1.1.x/blueprints/#blueprints "Modular Applications with Blueprints")<br />
-[Gunicorn](https://gunicorn.org/ "Gunicorn")<br />
 
-I am using the following Bootstrap Template "SB Admin 2" from Start Bootstrap<br />
-[Start Bootstrap](https://startbootstrap.com/themes/sb-admin-2/ "SB Admin 2")
+## Tools I use for Web Application Development with Python and Flask
+* [NGINX](https://www.nginx.com/ "NGINX")<br />
+* [Docker](https://www.docker.com/ "Docker")<br />
+* [Docker Compose](https://docs.docker.com/compose/ "Docker Compose")<br />
+* [Bootstrap 4](https://getbootstrap.com/ "Bootstrap 4")<br />
+* [Normalize CSS](https://necolas.github.io/normalize.css/ "Normalize CSS")<br />
+* [Chart JS](https://www.chartjs.org/ "Chart JS")<br />
+* [DataTables](https://www.datatables.net/ "DataTables")<br />
+* [Font Awesome](https://fontawesome.com/ "Font Awesome")<br />
+* [jQuery](https://jquery.com/ "jQuery")<br />
+* [Modernizr](https://modernizr.com/ "Modernizr")<br />
+
+## Python Libraries I use for Web Application Development with Python and Flask
+* [Flask](https://flask.palletsprojects.com/en/1.1.x/ "Flask")<br />
+* [Flask-Login](https://flask-login.readthedocs.io/en/latest/ "Flask-Login")<br />
+* [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/ "Flask-SQLAlchemy")<br />
+* [Flask-Bcrypt](https://flask-bcrypt.readthedocs.io/en/latest/ "Flask-Bcrypt")<br />
+* [Flask-Security](https://pythonhosted.org/Flask-Security/ "Flask-Security")<br />
+* [Flask-Uploads](https://pythonhosted.org/Flask-Uploads/ "Flask-Uploads")<br />
+* [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/ "Flask-WTF")<br />
+* [WTForms](https://wtforms.readthedocs.io/en/2.3.x/ "WTForms")<br />
+* [email-validator](https://github.com/JoshData/python-email-validator "email-validator")<br />
+* [gunicorn](https://gunicorn.org/ "gunicorn")<br />
+* [pyOpenSSL](https://www.pyopenssl.org/en/stable/ "pyOpenSSL")<br />
 
 ---
 ![alt text][logo]
@@ -19,23 +41,51 @@ I am using the following Bootstrap Template "SB Admin 2" from Start Bootstrap<br
 
 ---
 
+## For testing purposes
+The application comes with test certs for testing only. Make sure you do not use them on production.
+```ignorelang
+/Flask-Boilerplate
+    /services
+        /reverse_proxy
+            /certs
+                cert.pem
+                key.pem
+```
+
+The credentials to login and test are:<br />
+Email: admin@example.local<br />
+Password: Admin123<br />
+
 ## Directory structure
 ```ignorelang
 /Flask-Boilerplate
-    setup.py
-    wsgi.py
-    /application
-        __init__.py
-        views.py
-        /blueprints
-            example
-        /static
-            style.css
-        /templates
-            layout.html
-            index.html
-            login.html
-            ...
+    .gitattributes
+    .gitignore
+    docker-compose.yml
+    LICENSE
+    README.md
+    /services
+        /reverse_proxy
+            Dockerfile
+            webapp.conf
+            /certs
+        /web
+            Dockerfile
+            /web_app
+                requirements.txt
+                wsgi.py
+                /myapp
+                    __init__.py
+                    forms.py
+                    models.py
+                    views.py
+                    /blueprints
+                    /static
+                        /css
+                        /js
+                        /img
+                        /vendors
+                    /templates
 ```
 
 ---
@@ -73,37 +123,7 @@ CSS Style - Already has the "style" tags added, no need to add them.
 {% endblock style %}
 ```
 
-The sidebar title on the upper left corner
-```ignorelang
-{% block side_bar_title %}
-{% endblock side_bar_title %}
-```
-
-Profile name
-```ignorelang
-{% block profile_name %}
-{% endblock profile_name %}
-```
-
-Profile image - the block is already inside the src attribute right inside the double quotes already. Just add the image path or image url.
-```ignorelang
-{% block profile_img %}
-{% endblock profile_img %}
-```
-
-Page header
-```ignorelang
-{% block page_header %}
-{% endblock page_header %}
-```
-
-Page sub header
-```ignorelang
-{% block page_sub_header %}
-{% endblock page_sub_header %}
-```
-
-Page contentb - The content block is right below page header inside the content area.
+Page content - The content block is right below page header inside the content area.
 ```ignorelang
 {% block content %}
 {% endblock content %}
@@ -126,22 +146,79 @@ Note: Run the following commands from the current directory where the Dockerfile
 
 Lets build everything using docker-compose with the switch -d to run it on the background and --build to build everything.
 ```ignorelang
-$ sudo docker-compose up -d --build
+$ docker-compose up -d --build
 ```
 
-If you want to bring down the web application and remove the images run.
+To check the running containers
 ```ignorelang
-$ sudo docker-compose down --volume --rmi all
+$ docker-compose ps
 ```
 
-If you need to export the image after creating it use the following command
+If you want to bring down the web application and remove the images run.<br />
+NOTE: This only removes the reverse proxy and web images
 ```ignorelang
-$ sudo docker save -o /docker_images/flask-boilerplate.tar flask-boilerplate:flask-boilerplate
+$ docker-compose down --volume --rmi all
 ```
 
-To load the image on another server use the following command
+To remove all images that are not being used by a running container
 ```ignorelang
-$ sudo docker load -i /docker_images/flask-boilerplate.tar
+$ docker image prune -fa
+```
+
+To remove all volumes that are not being used by a running container
+```ignorelang
+$ docker volume prune -f
+```
+
+To remove all networks that are not being used by a running container
+```ignorelang
+$ docker network prune -f
+```
+
+To remove all containers that are not running
+```ignorelang
+$ docker container prune -f
+```
+
+## What if you need to export the images to another system?
+Sometimes you need to development an internal application for a company and the production server has no access to the outside world so you have to build the images in your local computer, export them, and then load them on the server.<br />
+Lets export our application images:
+```ignorelang
+$ docker save -o web_application.tar web_application:web_application
+$ docker save -o reverse_proxy.tar reverse_proxy:reverse_proxy
+```
+
+To load the image on another server use the following command:
+```ignorelang
+$ docker load -i web_application.tar
+$ docker load -i reverse_proxy.tar
+```
+
+Lets build a new docker-compose file and name it import-docker-compose.yml, Add the following code in the file.
+```yaml
+version: '3.7'
+services:
+  web_application:
+    restart: always
+    container_name: web_application
+    image: web_application:web_application
+    expose:
+      - 5000
+    entrypoint: ['gunicorn', '-w', '7', '-b', '0.0.0.0:5000', 'wsgi']
+  reverse_proxy:
+    restart: always
+    container_name: reverse_proxy
+    image: reverse_proxy:reverse_proxy
+    depends_on:
+      - web_application
+    ports:
+      - 443:443
+      - 80:80
+```
+
+Lets build the containers using our new import-docker-compose file.
+```ignorelang
+$ docker-compose -f import-docker-compose.yml up -d
 ```
 
 ## What if you need to run your application over HTTPS while on development?
@@ -168,5 +245,5 @@ if __name__ == '__main__':
 
 ## Build the self-signed certificates
 ```ignorelang
-$ openssl req -x509 -newkey rsa:4096 -nodes -out /etc/container_data/certs/cert.pem -keyout /etc/container_data/certs/key.pem -days 365
+$ openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
 ```
