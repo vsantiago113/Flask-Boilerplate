@@ -1,5 +1,5 @@
 # Flask-Boilerplate
-This is the base of a web application in Flask to get you started and save time. I decided to go with the following directory structure from the Flask documentation because it makes sense to me when running the web application on a Docker container and I just have to pass Docker a "command flask run" to start the web application.
+This is the base of a web application in Flask to get you started and save time. The application run using gunicorn on a docker container thought a reverse proxy using NGINX and over HTTPS.
 
 ---
 
