@@ -1,17 +1,20 @@
 version: '3.7'
 services:
-  web:
+  web_application:
     restart: always
-    container_name: web
-    build: ./services/web
+    container_name: web_application
+    build: ./services/web_application
+    image: web_application:web_application
     expose:
       - 5000
     entrypoint: ['gunicorn', '-w', '7', '-b', '0.0.0.0:5000', 'wsgi']
-  nginx:
+  reverse_proxy:
     restart: always
-    container_name: nginx
+    container_name: reverse_proxy
     build: ./services/reverse_proxy
+    image: reverse_proxy:reverse_proxy
     depends_on:
-      - web
+      - web_application
     ports:
-      - 4443:443
+      - 443:443
+      - 80:80
