@@ -154,6 +154,26 @@ To check the running containers
 $ docker-compose ps
 ```
 
+To login on the web_application container's shell
+```ignorelang
+$ docker exec -ti web_application sh
+```
+
+To login on the reverse_proxy container's shell
+```ignorelang
+$ docker exec -ti reverse_proxy sh
+```
+
+To inspect an image to see all the configs and how it is built.
+```ignorelang
+$ docker image inspect web_application:web_application
+```
+
+To inspect an image to see all the configs and how it is built.
+```ignorelang
+$ docker image inspect reverse_proxy:reverse_proxy
+```
+
 If you want to bring down the web application and remove the images run.<br />
 NOTE: This only removes the reverse proxy and web images
 ```ignorelang

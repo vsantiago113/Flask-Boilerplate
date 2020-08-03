@@ -5,9 +5,9 @@ services:
     container_name: web_application
     build: ./services/web_application
     image: web_application:web_application
-    expose:
-      - 5000
-    entrypoint: ['gunicorn', '-w', '7', '-b', '0.0.0.0:5000', 'wsgi']
+    environment:
+      - SECRET_KEY=this_is_my_global_secret_key_change_it
+      - WTF_CSRF_SECRET_KEY=wtf_csrf_secret_token_key_change_it
   reverse_proxy:
     restart: always
     container_name: reverse_proxy

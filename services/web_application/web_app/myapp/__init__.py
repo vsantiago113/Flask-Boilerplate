@@ -1,18 +1,16 @@
-from flask import Flask, g
+from flask import Flask, g, request, redirect
 from flask_login import LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
-
-global_secret_key = 'this_is_my_global_secret_key_change_it'
-wtf_csrf_secret_key = 'wtf_csrf_secret_token_key_change_it'
+import os
 
 application = Flask(__name__)
-application.secret_key = global_secret_key
+application.secret_key = os.environ.get('SECRET_KEY')
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 application.config['SQLALCHEMY_BINDS'] = {}
 application.config['WTF_CSRF_ENABLED'] = True
-application.config['WTF_CSRF_SECRET_KEY'] = wtf_csrf_secret_key
+application.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY')
 
 login_manager = LoginManager()
 login_manager.init_app(application)
