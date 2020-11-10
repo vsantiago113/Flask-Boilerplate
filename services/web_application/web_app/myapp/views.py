@@ -1,7 +1,7 @@
 from services.web_application.web_app.myapp import application, login_manager, database, current_user, admin
 from services.web_application.web_app.myapp.blueprints import example
 from flask import render_template, redirect, url_for, request, escape, g, flash, abort
-from services.web_application.web_app.myapp.models import User
+from services.web_application.web_app.myapp.models import User, Role
 from flask_login import login_required, logout_user, login_user
 from flask_bcrypt import check_password_hash, generate_password_hash
 from services.web_application.web_app.myapp.forms import LoginForm
@@ -15,10 +15,8 @@ application.register_blueprint(example.api)
 @application.before_first_request
 def before_first_request():
     database.create_all()
-    if User.query.get(1):
-        pass
-    else:
-        admin_user = User('admin', 'admin@example.local', 'Admin123', True)
+    if not User.query.filter_by(username='admin').first():
+        admin_user = User(username='admin', email='admin@example.local', password='Admin123', is_admin=True)
         database.session.add(admin_user)
         database.session.commit()
 
@@ -74,7 +72,7 @@ class UserView(ModelView):
     column_exclude_list = ['password']
     column_searchable_list = ['username', 'email']
     column_filters = ['is_admin']
-    form_excluded_columns = ['joined_on']
+    form_excluded_columns = ['joined_on', 'roles']
 
     def is_accessible(self):
         if current_user.is_authenticated:
@@ -89,6 +87,19 @@ class UserView(ModelView):
         model.password = generate_password_hash(model.password)
         if is_created:
             model.joined_on = datetime.now()
+
+
+class RoleView(ModelView):
+    page_size = 25
+
+    def is_accessible(self):
+        if current_user.is_authenticated:
+            return current_user.is_admin
+        return False
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
 
 
 @application.route('/')
@@ -134,4 +145,5 @@ application.register_error_handler(401, unauthorized)
 application.register_error_handler(403, forbidden)
 application.register_error_handler(500, internal_server_error)
 admin.add_view(UserView(User, database.session))
+admin.add_view(RoleView(Role, database.session))
 admin.add_link(MenuLink(name='Logout', url='/logout', category=''))
