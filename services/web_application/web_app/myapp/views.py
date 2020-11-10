@@ -33,15 +33,6 @@ def unauthorized_handler():
     abort(401)
 
 
-@application.errorhandler(404)
-def page_not_found(e: object):
-    """
-
-    :type e: object
-    """
-    return render_template('404.html'), 404
-
-
 @application.errorhandler(401)
 def unauthorized(e: object):
     """
@@ -49,6 +40,24 @@ def unauthorized(e: object):
     :type e: object
     """
     return render_template('401.html'), 401
+
+
+@application.errorhandler(403)
+def forbidden(e: object):
+    """
+
+    :type e: object
+    """
+    return render_template('403.html'), 403
+
+
+@application.errorhandler(404)
+def page_not_found(e: object):
+    """
+
+    :type e: object
+    """
+    return render_template('404.html'), 404
 
 
 @application.errorhandler(500)
@@ -60,7 +69,7 @@ def internal_server_error(e: object):
     return render_template('500.html'), 500
 
 
-class MyAdminView(ModelView):
+class UserView(ModelView):
     page_size = 25
     column_exclude_list = ['password']
     column_searchable_list = ['username', 'email']
@@ -70,6 +79,7 @@ class MyAdminView(ModelView):
     def is_accessible(self):
         if current_user.is_authenticated:
             return current_user.is_admin
+        return False
 
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access
@@ -121,6 +131,7 @@ def logout():
 
 application.register_error_handler(404, page_not_found)
 application.register_error_handler(401, unauthorized)
+application.register_error_handler(403, forbidden)
 application.register_error_handler(500, internal_server_error)
-admin.add_view(MyAdminView(User, database.session))
+admin.add_view(UserView(User, database.session))
 admin.add_link(MenuLink(name='Logout', url='/logout', category=''))

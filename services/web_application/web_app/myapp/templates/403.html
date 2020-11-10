@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block title %}401 Error{% endblock %}
+
+{% block container %}
+    <div class="full-screen-size-fixed-container d-flex justify-content-center align-items-center">
+        <div class="p-3 text-center shadow">
+            <h1 class="display-1 font-weight-bold ">403</h1>
+            <h4 class="text-muted">FORBIDDEN</h4>
+            <p class="">ACCESS TO THIS RESOURCE ON THE SERVER IS DENIED!</p>
+            <a class="btn btn-dark" href="{{ url_for('home') }}" role="button"><i class="fas fa-house-user mr-2"></i> Let&#39;s go back home!</a>
+        </div>
+    </div>
+{% endblock %}
