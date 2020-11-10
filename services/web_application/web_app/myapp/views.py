@@ -39,7 +39,7 @@ def unauthorized(e: object):
 
     :type e: object
     """
-    return render_template('401.html'), 401
+    return render_template('401.html', http_error=e), 401
 
 
 @application.errorhandler(403)
@@ -48,7 +48,7 @@ def forbidden(e: object):
 
     :type e: object
     """
-    return render_template('403.html'), 403
+    return render_template('403.html', http_error=e), 403
 
 
 @application.errorhandler(404)
@@ -57,7 +57,7 @@ def page_not_found(e: object):
 
     :type e: object
     """
-    return render_template('404.html'), 404
+    return render_template('404.html', http_error=e), 404
 
 
 @application.errorhandler(500)
@@ -66,7 +66,7 @@ def internal_server_error(e: object):
 
     :type e: object
     """
-    return render_template('500.html'), 500
+    return render_template('500.html', http_error=e), 500
 
 
 class UserView(ModelView):

@@ -1,13 +1,13 @@
 {% extends 'layout.html' %}
 
-{% block title %}404 Error{% endblock %}
+{% block title %}{{ http_error.code }} Error{% endblock %}
 
 {% block container %}
     <div class="full-screen-size-fixed-container d-flex justify-content-center align-items-center">
         <div class="p-3 text-center shadow">
-            <h1 class="display-1 font-weight-bold ">404</h1>
-            <h4 class="text-muted">Page Not Found</h4>
-            <p class="">The page got swallowed by a black hole...</p>
+            <h1 class="display-1 font-weight-bold ">{{ http_error.code }}</h1>
+            <h4 class="text-muted">{{ http_error.name }}</h4>
+            <p class="">{{ http_error.description }}</p>
             <a class="btn btn-dark" href="{{ url_for('home') }}" role="button"><i class="fas fa-house-user mr-2"></i> Let&#39;s go back home!</a>
         </div>
     </div>
