@@ -1,10 +1,13 @@
-from myapp import application, login_manager, database, csrf
-from myapp.blueprints import example
-from flask import render_template, redirect, url_for, request, escape, g, flash
-from myapp.models import User
+from services.web_application.web_app.myapp import application, login_manager, database, current_user, admin
+from services.web_application.web_app.myapp.blueprints import example
+from flask import render_template, redirect, url_for, request, escape, g, flash, abort
+from services.web_application.web_app.myapp.models import User
 from flask_login import login_required, logout_user, login_user
-from flask_bcrypt import check_password_hash
-from myapp.forms import LoginForm
+from flask_bcrypt import check_password_hash, generate_password_hash
+from services.web_application.web_app.myapp.forms import LoginForm
+from flask_admin.contrib.sqla import ModelView
+from flask_admin.menu import MenuLink
+from datetime import datetime
 
 application.register_blueprint(example.api)
 
@@ -15,8 +18,8 @@ def before_first_request():
     if User.query.get(1):
         pass
     else:
-        admin = User('admin', 'admin@example.local', 'Admin123', True)
-        database.session.add(admin)
+        admin_user = User('admin', 'admin@example.local', 'Admin123', True)
+        database.session.add(admin_user)
         database.session.commit()
 
 
@@ -25,14 +28,57 @@ def load_user(user_id):
     return User.query.filter_by(id=user_id).first()
 
 
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    abort(401)
+
+
 @application.errorhandler(404)
-def page_not_found(e):
+def page_not_found(e: object):
+    """
+
+    :type e: object
+    """
     return render_template('404.html'), 404
 
 
+@application.errorhandler(401)
+def unauthorized(e: object):
+    """
+
+    :type e: object
+    """
+    return render_template('401.html'), 401
+
+
 @application.errorhandler(500)
-def internal_server_error(e):
+def internal_server_error(e: object):
+    """
+
+    :type e: object
+    """
     return render_template('500.html'), 500
+
+
+class MyAdminView(ModelView):
+    page_size = 25
+    column_exclude_list = ['password']
+    column_searchable_list = ['username', 'email']
+    column_filters = ['is_admin']
+    form_excluded_columns = ['joined_on']
+
+    def is_accessible(self):
+        if current_user.is_authenticated:
+            return current_user.is_admin
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
+
+    def on_model_change(self, form, model, is_created):
+        model.password = generate_password_hash(model.password)
+        if is_created:
+            model.joined_on = datetime.now()
 
 
 @application.route('/')
@@ -74,4 +120,7 @@ def logout():
 
 
 application.register_error_handler(404, page_not_found)
+application.register_error_handler(401, unauthorized)
 application.register_error_handler(500, internal_server_error)
+admin.add_view(MyAdminView(User, database.session))
+admin.add_link(MenuLink(name='Logout', url='/logout', category=''))
