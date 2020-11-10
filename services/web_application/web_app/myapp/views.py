@@ -8,6 +8,7 @@ from services.web_application.web_app.myapp.forms import LoginForm
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.menu import MenuLink
 from datetime import datetime
+from wtforms import PasswordField
 
 application.register_blueprint(example.api)
 
@@ -72,7 +73,18 @@ class UserView(ModelView):
     column_exclude_list = ['password']
     column_searchable_list = ['username', 'email']
     column_filters = ['is_admin']
-    form_excluded_columns = ['joined_on', 'roles']
+
+    # <--
+    # Issue found: When the user was updated the password field was resend and a new hash was created from the
+    # current password hash.
+    # Solution: I removed the password field and added a new one named 'password2' to be able to change the password
+    # if the form is filled. So now if someone enter a new password on the field 'password2' then we create a
+    # password hash from the new password and this will be updated on the database as the new user password.
+    form_excluded_columns = ['joined_on', 'roles', 'password']
+    form_extra_fields = {
+        'password2': PasswordField('New password')
+    }
+    # -->
 
     def is_accessible(self):
         if current_user.is_authenticated:
@@ -84,9 +96,12 @@ class UserView(ModelView):
         return redirect(url_for('login', next=request.url))
 
     def on_model_change(self, form, model, is_created):
-        model.password = generate_password_hash(model.password)
         if is_created:
             model.joined_on = datetime.now()
+
+        # Here
+        if form.password2.data is not None:
+            model.password = generate_password_hash(form.password2.data)
 
 
 class RoleView(ModelView):
